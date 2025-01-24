@@ -2,13 +2,14 @@ package main
 
 import (
 	"context"
-	"example-service/internal/implementation/repository/mongo"
-	services "example-service/internal/implementation/services/example"
-	"example-service/internal/infraestructure/driven/cmux"
-	"example-service/internal/infraestructure/driven/core"
-	mongodriven "example-service/internal/infraestructure/driven/mongodb"
-	redisdriven "example-service/internal/infraestructure/driven/redis"
-	"example-service/internal/infraestructure/driver/rest"
+
+	services "service/internal/implementation/example"
+	"service/internal/infrastructure/adapters/repository/mongo"
+	"service/internal/infrastructure/driven/cmux"
+	"service/internal/infrastructure/driven/core"
+	mongodriven "service/internal/infrastructure/driven/mongodb"
+	redisdriven "service/internal/infrastructure/driven/redis"
+	"service/internal/infrastructure/driver/rest"
 )
 
 func main() {
@@ -16,14 +17,14 @@ func main() {
 	cfg := core.GetEnviroments()
 
 	// Initialize database
-	mongodriven.ConnectMongoDB(ctx, cfg.MongoUrl, cfg.MongoDatabase, cfg.AppName)
-	defer mongodriven.DisconnectMongoDB(ctx)
+	mongoSocket := mongodriven.NewMongoConnection(ctx, cfg.MongoUrl, cfg.MongoDatabase, cfg.AppName)
+	redisSocket := redisdriven.NewRedisConnection(ctx, cfg.RedisUrl)
 
-	redisdriven.ConnectRedisDB(ctx, cfg.RedisUrl)
-	defer redisdriven.DisconnectRedisDB(ctx)
+	defer mongoSocket.DisconnectMongoDB(ctx)
+	defer redisSocket.DisconnectRedisDB(ctx)
 
 	// Initialize repositories
-	exampleRep := mongo.NewExampleRepository(mongodriven.GetDatabase())
+	exampleRep := mongo.NewExampleRepository(mongoSocket.GetDatabase())
 
 	// Initialize services
 	exampleSrv := services.NewExampleService(exampleRep)

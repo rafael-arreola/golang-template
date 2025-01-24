@@ -1,6 +1,6 @@
 # :writing_hand: <service-name>
 
-Template for creating a new service in go
+Microservice designed to control something
 
 ## Table of Contents
 
@@ -35,7 +35,7 @@ choco install golang
 Debian based
 
 ```shell
-apt install golang-go 
+apt install golang-go
 ```
 
 Mac OS X
@@ -94,18 +94,18 @@ Other installation methods: [Download Golang](https://go.dev/dl/)
 with makefile
 
 ```shell
-make testing-example-service
+make testing-service
 ```
 
 expected output
 
 ```bash
 ============================================================
-Creating new order... 
+Creating new order...
 
 {"id":"6560ec6df49b452dade3e61e","first_name":"John","last_name":"Doe","sub_example":{"sub_example_id":123,"sub_example_name":"subExampleName"}}
 ============================================================
-Searching order from seeder 
+Searching order from seeder
 
 {"id":"656045095ff16ef1a00fd4ef","first_name":"John","last_name":"Doe","sub_example":{"sub_example_id":123,"sub_example_name":"subExampleName"}}
 ============================================================
@@ -136,71 +136,63 @@ curl --location '127.0.0.1:8080/api/v1/order/656045095ff16ef1a00fd4ef'
 ```shell
 <service-name>
 .
+├── CHANGELOG.md
+├── CHANGELOG.template.md
+├── Makefile
+├── README.md
 ├── build
-│   ├── cloudbuild.yaml
-│   └── Dockerfile
+│   └── cloudbuild.yaml
 ├── cmd
 │   └── service
 │       └── main.go
+├── docker
+│   ├── Dockerfile.dev
+│   └── Dockerfile
+├── docker-compose.yml
 ├── docs
 │   ├── MODEL.md
 │   ├── STATE-MACHINE.md
 │   └── TRANSITIONS.md
-├── internal
-│   ├── domain
-│   │   ├── core
-│   │   │   ├── context.go
-│   │   │   └── envs.go
-│   │   ├── entities
-│   │   │   └── example.go
-│   │   └── ports
-│   │       ├── core
-│   │       │   └── logger.go
-│   │       ├── example_repo_iface.go
-│   │       └── example_service_iface.go
-│   ├── implementation
-│   │   ├── repository
-│   │   │   └── mongo
-│   │   │       ├── seeders
-│   │   │       │   └── examples.json
-│   │   │       └── order_impl.go
-│   │   └── services
-│   │       └── example
-│   │           ├── example_handlers_impl.go
-│   │           └── example_impl.go
-│   └── infraestructure
-│       ├── driven
-│       │   ├── cmux
-│       │   │   └── cmux.go
-│       │   ├── core
-│       │   │   ├── envs
-│       │   │   │   └── config.go
-│       │   │   └── logger
-│       │   │       └── logger.go
-│       │   ├── fiber
-│       │   │   └── fiber.go
-│       │   ├── mongodb
-│       │   │   └── mongodb.go
-│       │   ├── redis
-│       │   │   └── cache.go
-│       │   └── tracer
-│       │       ├── tracer.go
-│       │       └── without_exporter.go
-│       └── driver
-│           ├── grpc
-│           │   ├── domain_to_grpc.go
-│           │   ├── handlers.go
-│           │   └── server.go
-│           └── rest
-│               └── handlers.go
-├── CHANGELOG.md
-├── CHANGELOG.template.md
-├── docker-compose.yml
-├── Dockerfile.dev
 ├── go.mod
 ├── go.sum
-├── Makefile
-└── README.md
+└── internal
+    ├── domain
+    │   ├── entities
+    │   │   └── example.go
+    │   ├── envs.go
+    │   └── ports
+    │       └── example_repo_iface.go
+    ├── implementation
+    │   └── example
+    │       └── example_impl.go
+    └── infrastructure
+        ├── adapters
+        │   └── repository
+        │       └── mongo
+        │           ├── order_impl.go
+        │           └── seeders
+        │               └── examples.json
+        ├── driven
+        │   ├── cmux
+        │   │   └── cmux.go
+        │   ├── core
+        │   │   ├── envs.go
+        │   │   └── logger.go
+        │   ├── fiber_server
+        │   │   └── fiber.go
+        │   ├── mongodb
+        │   │   └── mongodb.go
+        │   ├── redis
+        │   │   └── cache.go
+        │   └── tracer
+        │       └── tracer.go
+        └── driver
+            ├── grpc
+            │   ├── domain_to_grpc.go
+            │   ├── handlers.go
+            │   └── server.go
+            └── rest
+                └── handlers.go
 
 
 ```
@@ -228,7 +220,7 @@ supports its requirements and goals.
 
 | Software | Version |
 |:---------|:--------|
-| MongoDB  | >=5.x   |
+| MongoDB  | >=7.x   |
 | Redis    | >=6.x   |
 
 ## Data Model
