@@ -9,7 +9,6 @@ WORKDIR /app
 
 RUN apk add upx git gcc musl-dev tzdata
 
-
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 COPY . .

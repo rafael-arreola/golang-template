@@ -16,7 +16,7 @@ type MongoRepository struct {
 	mongoDatabase *mongo.Database
 }
 
-func NewMongoConnection(ctx context.Context, mongoUrl string, appName string, database string) *MongoRepository {
+func NewMongoConnection(ctx context.Context, mongoUrl string, database string, appName string) *MongoRepository {
 	debugger := dbg.GetLogger()
 	debugger.Infow("MongoDB is starting...")
 
@@ -28,6 +28,11 @@ func NewMongoConnection(ctx context.Context, mongoUrl string, appName string, da
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		debugger.Fatalw("Error creating client for MongoDB", "error", err)
+	}
+
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		debugger.Fatalw("Error pinging MongoDB", "error", err)
 	}
 
 	databaseOptions := options.Database()
